@@ -58,37 +58,47 @@ def T_steady_less_than_1(r_star, t_star, pe, gamma):
 
     return first+second
 
-# def T_final_greater_than_1(r_star, t_star, pe, gamma):
-#     AB_avg_r_minus_one = (Af(r_star-1, t_star, pe) + Bf(r_star-1, t_star, pe))/2
-#     AB_avg_r_plus_one = (Af(r_star+1, t_star, pe) + Bf(r_star+1, t_star, pe))/2
-#     C_one_minus_r = exp_pet(pe, t_star)*Cf(r_star-1, t_star)
-#     C_one_plus_r = exp_pet(pe, t_star)*Cf(r_star+1, t_star)
-#     AB_subt_r_minus_one = (Af(r_star-1, t_star, pe) - Bf(r_star-1, t_star, pe))/(2*np.sqrt(pe))
-#     AB_subt_r_plus_one = (Af(r_star+1, t_star, pe) - Bf(r_star+1, t_star, pe))/(2*np.sqrt(pe))
+def T_final_greater_than_1(r_star, t_star, pe, gamma):
+    AB_avg_r_minus_one = (Af(r_star-1, t_star, pe) + Bf(r_star-1, t_star, pe))/2
+    AB_avg_r_plus_one = (Af(r_star+1, t_star, pe) + Bf(r_star+1, t_star, pe))/2
+    C_one_minus_r = exp_pet(pe, t_star)*Cf(r_star-1, t_star)
+    C_one_plus_r = exp_pet(pe, t_star)*Cf(r_star+1, t_star)
+    AB_subt_r_minus_one = (Af(r_star-1, t_star, pe) - Bf(r_star-1, t_star, pe))/(2*np.sqrt(pe))
+    AB_subt_r_plus_one = (Af(r_star+1, t_star, pe) - Bf(r_star+1, t_star, pe))/(2*np.sqrt(pe))
 
-#     seventh_term = exp_pet(pe, t_star)*(2*np.exp((-1*(r_star-1)**2)/(4*t_star))*np.sqrt(t_star/np.pi) - (r_star-1)*Cf(r_star-1, t_star))
-#     eighth_term = exp_pet(pe, t_star)*(2*np.exp((-1*(r_star+1)**2)/(4*t_star))*np.sqrt(t_star/np.pi) - (r_star+1)*Cf(r_star+1, t_star))
+    seventh_term = exp_pet(pe, t_star)*(2*np.exp((-1*(r_star-1)**2)/(4*t_star))*np.sqrt(t_star/np.pi) - (r_star-1)*Cf(r_star-1, t_star))
+    eighth_term = exp_pet(pe, t_star)*(2*np.exp((-1*(r_star+1)**2)/(4*t_star))*np.sqrt(t_star/np.pi) - (r_star+1)*Cf(r_star+1, t_star))
 
-#     initial_term = gamma/((2*r_star)*pe)
+    initial_term = gamma/((2*r_star)*pe)
 
-#     return initial_term*(AB_avg_r_minus_one + AB_avg_r_plus_one - C_one_minus_r - C_one_plus_r - AB_subt_r_minus_one + AB_subt_r_plus_one + seventh_term - eighth_term)
+    return initial_term*(AB_avg_r_minus_one + AB_avg_r_plus_one - C_one_minus_r - C_one_plus_r - AB_subt_r_minus_one + AB_subt_r_plus_one + seventh_term - eighth_term)
 
+def T_steady_greater_than_1(r_star, t_star, pe, gamma):
+    first = (1/(2*r_star*pe))
+    second = np.exp(-r_star*np.sqrt(pe))
+    exp_pos = np.exp(np.sqrt(pe))
+    exp_neg = np.exp(-np.sqrt(pe))
+    inv_sqrt_pe = 1/np.sqrt(pe)
+    third = exp_pos + exp_neg - inv_sqrt_pe*(exp_pos - exp_neg)
+
+    return first*second*third
+  
 
 #rs = np.arange(0,2,0.1).tolist()
 #ts = np.arange(0.1,50,1).tolist()
 #X,Y = np.meshgrid(rs, ts) # grid of point
 
-x = linspace(0.001, 1, 6)
+x = linspace(0.001, 3, 6)
 # x1 = linspace(2, 3, 2)
 Z = T_final(x, 2, pp, g) # evaluation of the function 
 Z_1 = T_steady_less_than_1(x, 2, pp, g)
+Z_2 = T_final_greater_than_1(x, 2, pp, g)
+Z_3 = T_steady_greater_than_1(x, 2, pp, g)
 # Z_1 = T_final_greater_than_1(x1, 2, pp, g)
 figure()
-plot(x, Z+Z_1, 'r')
+plot(x, Z+Z_1+Z_2+Z_3, 'r')
 xlabel('r*')
 ylabel('T*')
-ylim([0,0.3])
-
 title('title')
 
 # fig = plt.figure(figsize=(14,6))
